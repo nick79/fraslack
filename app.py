@@ -23,7 +23,7 @@ def send_data(path):
 @app.route('/slack', methods=['POST'])
 def slack():
     if validate(request):
-        response_message = process_command()
+        response_message = process_command(request)
         return Response(response_message), 200
 
 
