@@ -1,0 +1,3 @@
+SLACK_TOKEN = 'LxqD74GgYpSCmQlNsl5MXckS'
+
+SUPPORTED_FILE_TYPES = ['.txt', '.jpg']
