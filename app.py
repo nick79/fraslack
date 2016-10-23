@@ -40,7 +40,7 @@ def extract_slack_request():
     text = request.form.get('text')
     channel = request.form.get('channel_name')
     user = request.form.get('user_name')
-    app.logger.info('User: %s  in channel: %s requested file: ', user, channel, text)
+    app.logger.info('User: %s  in channel: %s requested file: ', str(user), str(channel), str(text))
     return text, token
 
 
