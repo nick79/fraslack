@@ -3,8 +3,8 @@ from itsdangerous import TimestampSigner
 from const import SLACK_TOKEN, SUPPORTED_FILE_TYPES, FRAME_PATH, BASE_PATH, UNSUPPORTED_MESSAGE, SECRET_KEY
 
 
-def validate(request):
-    if request.form.get('token') == SLACK_TOKEN:
+def validate(token):
+    if token == SLACK_TOKEN:
         return True
     return False
 

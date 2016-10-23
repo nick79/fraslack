@@ -1,6 +1,8 @@
 import os
+import sys
 from flask import Flask
 from flask import Response
+from flask import logging
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -11,6 +13,8 @@ from const import FRAME_PATH, SLACK_PATH, DATA_PATH, SECRET_KEY, LINK_DURATION
 from slack import validate, process_command
 
 app = Flask(__name__, static_url_path='/static')
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.DEBUG)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -25,9 +29,19 @@ def send_data(path):
 
 @app.route(SLACK_PATH, methods=['POST'])
 def slack():
-    if validate(request):
-        response_message = process_command(request.form.get('text'))
+    text, token = extract_slack_request()
+    if validate(token):
+        response_message = process_command(text)
         return Response(response_message), 200
+
+
+def extract_slack_request():
+    token = request.form.get('token')
+    text = request.form.get('text')
+    channel = request.form.get('channel_name')
+    user = request.form.get('user_name')
+    app.logger.info('User: %s  in channel: %s requested file: ', user, channel, text)
+    return text, token
 
 
 @app.route(FRAME_PATH)
@@ -37,6 +51,7 @@ def frame():
         file_url = signer.unsign(request.args.get('file_url'), max_age=LINK_DURATION)
         return render_template('frame.html', file=file_url)
     except BadSignature as e:
+        app.logger.error(e)
         return redirect(url_for('index'))
 
 if __name__ == '__main__':
