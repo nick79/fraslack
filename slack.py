@@ -17,10 +17,8 @@ def is_file_type_supported(file_url):
 
 
 def create_url(text):
-    url = BASE_PATH + FRAME_PATH + '?file_url=' + text
     signer = TimestampSigner(SECRET_KEY)
-    url = signer.sign(url)
-    print "URL: ", url
+    url = BASE_PATH + FRAME_PATH + '?file_url=' + signer.sign(text)
     return url
 
 

@@ -23,10 +23,10 @@ class TestSlack(TestCase):
         self.assertFalse(is_file_type_supported(FILE_PATH_NEGATIVE))
 
     def test_process_command_positive(self):
-        expected = BASE_PATH + FRAME_PATH + '?file_url=' + FILE_URL_POSITIVE
         signer = TimestampSigner(SECRET_KEY)
-        got = signer.unsign(process_command(FILE_URL_POSITIVE), max_age=LINK_DURATION)
-        self.assertEqual(expected, got)
+        to_be_unsigned = process_command(FILE_URL_POSITIVE).split("?file_url=")[1]
+        got = signer.unsign(to_be_unsigned, max_age=LINK_DURATION)
+        self.assertEqual(FILE_URL_POSITIVE, got)
 
     def test_process_command_negative(self):
         self.assertEqual(UNSUPPORTED_MESSAGE, process_command(FILE_URL_NEGATIVE))
