@@ -34,10 +34,11 @@ def slack():
 def frame():
     signer = TimestampSigner(SECRET_KEY)
     try:
+        print "ARGUMENT: ", request.args.get('file_url')
         file_url = signer.unsign(request.args.get('file_url'), max_age=LINK_DURATION)
         return render_template('frame.html', file=file_url)
-    except (BadSignature, BadTimeSignature, SignatureExpired) as e:
-        print e
+    except BadSignature as e:
+        print "ERROR", e
         return redirect(url_for('index'))
 
 if __name__ == '__main__':
