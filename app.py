@@ -6,7 +6,7 @@ from flask import render_template
 from flask import request
 from flask import send_from_directory
 from flask import url_for
-from itsdangerous import TimestampSigner, BadTimeSignature, BadSignature, SignatureExpired
+from itsdangerous import TimestampSigner, BadSignature
 from const import FRAME_PATH, SLACK_PATH, DATA_PATH, SECRET_KEY, LINK_DURATION
 from slack import validate, process_command
 
@@ -26,7 +26,6 @@ def send_data(path):
 @app.route(SLACK_PATH, methods=['POST'])
 def slack():
     if validate(request):
-        print "SLACK ARGUMENT: ", request.form.get('text')
         response_message = process_command(request.form.get('text'))
         return Response(response_message), 200
 
@@ -35,11 +34,9 @@ def slack():
 def frame():
     signer = TimestampSigner(SECRET_KEY)
     try:
-        print "FRAME ARGUMENT: ", request.args.get('file_url')
         file_url = signer.unsign(request.args.get('file_url'), max_age=LINK_DURATION)
         return render_template('frame.html', file=file_url)
     except BadSignature as e:
-        print "ERROR", e
         return redirect(url_for('index'))
 
 if __name__ == '__main__':

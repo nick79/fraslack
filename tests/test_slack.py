@@ -1,6 +1,7 @@
-from unittest.case import TestCase
+import unittest
+from unittest import TestCase
 from itsdangerous import TimestampSigner
-from const import BASE_PATH, FRAME_PATH, UNSUPPORTED_MESSAGE, SECRET_KEY, LINK_DURATION
+from const import UNSUPPORTED_MESSAGE, SECRET_KEY, LINK_DURATION
 from slack import is_file_type_supported, process_command
 
 FILE_URL_POSITIVE = 'https://fraslack.herokuapp.com/data/test.txt'
@@ -30,3 +31,7 @@ class TestSlack(TestCase):
 
     def test_process_command_negative(self):
         self.assertEqual(UNSUPPORTED_MESSAGE, process_command(FILE_URL_NEGATIVE))
+
+
+if __name__ == '__main__':
+    unittest.main()
