@@ -26,6 +26,7 @@ def send_data(path):
 @app.route(SLACK_PATH, methods=['POST'])
 def slack():
     if validate(request):
+        print "SLACK ARGUMENT: ", request.form.get('text')
         response_message = process_command(request.form.get('text'))
         return Response(response_message), 200
 
@@ -34,7 +35,7 @@ def slack():
 def frame():
     signer = TimestampSigner(SECRET_KEY)
     try:
-        print "ARGUMENT: ", request.args.get('file_url')
+        print "FRAME ARGUMENT: ", request.args.get('file_url')
         file_url = signer.unsign(request.args.get('file_url'), max_age=LINK_DURATION)
         return render_template('frame.html', file=file_url)
     except BadSignature as e:

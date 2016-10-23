@@ -20,6 +20,7 @@ def create_url(text):
     url = BASE_PATH + FRAME_PATH + '?file_url=' + text
     signer = TimestampSigner(SECRET_KEY)
     url = signer.sign(url)
+    print "URL: ", url
     return url
 
 
