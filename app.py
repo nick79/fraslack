@@ -1,10 +1,12 @@
 import os
 from flask import Flask
 from flask import Response
+from flask import redirect
 from flask import render_template
 from flask import request
 from flask import send_from_directory
-from itsdangerous import TimestampSigner
+from flask import url_for
+from itsdangerous import TimestampSigner, BadTimeSignature, BadSignature, SignatureExpired
 from const import FRAME_PATH, SLACK_PATH, DATA_PATH, SECRET_KEY, LINK_DURATION
 from slack import validate, process_command
 
@@ -31,8 +33,11 @@ def slack():
 @app.route(FRAME_PATH)
 def frame():
     signer = TimestampSigner(SECRET_KEY)
-    file_url = signer.unsign(request.args.get('file_url'), max_age=LINK_DURATION)
-    return render_template('frame.html', file=file_url)
+    try:
+        file_url = signer.unsign(request.args.get('file_url'), max_age=LINK_DURATION)
+        return render_template('frame.html', file=file_url)
+    except (BadSignature, BadTimeSignature, SignatureExpired) as e:
+        return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
