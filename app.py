@@ -37,6 +37,7 @@ def frame():
         file_url = signer.unsign(request.args.get('file_url'), max_age=LINK_DURATION)
         return render_template('frame.html', file=file_url)
     except (BadSignature, BadTimeSignature, SignatureExpired) as e:
+        print "ERROR:" + e
         return redirect(url_for('index'))
 
 if __name__ == '__main__':
