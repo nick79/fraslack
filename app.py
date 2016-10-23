@@ -4,7 +4,8 @@ from flask import Response
 from flask import render_template
 from flask import request
 from flask import send_from_directory
-
+from itsdangerous import TimestampSigner
+from const import FRAME_PATH, SLACK_PATH, DATA_PATH, SECRET_KEY, LINK_DURATION
 from slack import validate, process_command
 
 app = Flask(__name__, static_url_path='/static')
@@ -12,20 +13,26 @@ app = Flask(__name__, static_url_path='/static')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('hello.html')
+    return render_template('index.html')
 
 
-@app.route('/data/<path:path>')
+@app.route(DATA_PATH)
 def send_data(path):
     return send_from_directory('static', path)
 
 
-@app.route('/slack', methods=['POST'])
+@app.route(SLACK_PATH, methods=['POST'])
 def slack():
     if validate(request):
-        response_message = process_command(request)
+        response_message = process_command(request.form.get('text'))
         return Response(response_message), 200
 
+
+@app.route(FRAME_PATH)
+def frame():
+    signer = TimestampSigner(SECRET_KEY)
+    file_url = signer.unsign(request.args.get('file_url'), max_age=LINK_DURATION)
+    return render_template('frame.html', file=file_url)
 
 if __name__ == '__main__':
     app.run(debug=True)
