@@ -8,6 +8,7 @@ from flask import request
 from flask import send_from_directory
 from itsdangerous import BadSignature, Signer
 from const import FRAME_PATH, SLACK_PATH, DATA_PATH
+from frame import file_exist
 from slack import validate, process_command
 
 app = Flask(__name__, static_url_path='/static')
@@ -72,7 +73,14 @@ def frame():
     signer = Signer(SECRET_KEY)
     try:
         file_url = signer.unsign(request.args.get('file_url'))
-        return render_template('frame.html', file=file_url)
+        print str(file_url)
+        if file_exist(file_url):
+            app.logger.info('Opened file %s', str(file_url))
+            return render_template('frame.html', file=file_url)
+        else:
+            message = 'File: %s does not exist', str(file_url)
+            app.logger.warn(message)
+            return render_template('error.html', error_message=message)
     except BadSignature as e:
         app.logger.error(e)
         return render_template('error.html', error_message='Bad signature in link')

@@ -1,6 +1,6 @@
 import unittest
 from unittest import TestCase
-from itsdangerous import TimestampSigner
+from itsdangerous import Signer
 import app
 from const import SLACK_PATH, UNSUPPORTED_MESSAGE, FRAME_PATH
 
@@ -32,13 +32,13 @@ class TestApp(TestCase):
         self.assertEqual(result.status_code, 200)
         assert FILE_URL_POSITIVE in result.data
 
-    def test_frame_negative(self):
+    def test_frame_bad_link(self):
         result = self.app.get(FRAME_PATH, query_string=dict(file_url=FILE_URL_POSITIVE), follow_redirects=True)
         self.assertEqual(result.status_code, 200)
         assert 'Error Page' in result.data
 
     def test_frame_positive(self):
-        signer = TimestampSigner(app.SECRET_KEY)
+        signer = Signer(app.SECRET_KEY)
         file = signer.sign(FILE_URL_POSITIVE)
         result = self.app.get(FRAME_PATH, query_string=dict(file_url=file), follow_redirects=True)
         self.assertEqual(result.status_code, 200)
