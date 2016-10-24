@@ -1,7 +1,8 @@
 import unittest
 from unittest import TestCase
-from itsdangerous import TimestampSigner
-from const import UNSUPPORTED_MESSAGE, SECRET_KEY, LINK_DURATION
+from itsdangerous import Signer
+import app
+from const import UNSUPPORTED_MESSAGE
 from slack import is_file_type_supported, process_command
 
 FILE_URL_POSITIVE = 'https://fraslack.herokuapp.com/data/test.txt'
@@ -24,9 +25,9 @@ class TestSlack(TestCase):
         self.assertFalse(is_file_type_supported(FILE_PATH_NEGATIVE))
 
     def test_process_command_positive(self):
-        signer = TimestampSigner(SECRET_KEY)
+        signer = Signer(app.SECRET_KEY)
         to_be_unsigned = process_command(FILE_URL_POSITIVE).split("?file_url=")[1]
-        got = signer.unsign(to_be_unsigned, max_age=LINK_DURATION)
+        got = signer.unsign(to_be_unsigned)
         self.assertEqual(FILE_URL_POSITIVE, got)
 
     def test_process_command_negative(self):
