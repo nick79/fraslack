@@ -1,7 +1,7 @@
 import os
 from itsdangerous import Signer
 import app
-from const import SUPPORTED_FILE_TYPES, FRAME_PATH, BASE_PATH, UNSUPPORTED_MESSAGE
+from const import SUPPORTED_FILE_TYPES, FRAME_PATH, BASE_PATH, UNSUPPORTED_MESSAGE, PROTOCOLS, UNSUPPORTED_PROTOCOL
 
 
 def validate(token):
@@ -44,7 +44,9 @@ def process_command(text):
     :param text: Received url of file from slack.
     :return: Link for opening file in case that file is supported, otherwise message about unsupported file.
     """
-    if is_file_type_supported(text):
+    if not text.startswith(PROTOCOLS):
+        return UNSUPPORTED_PROTOCOL
+    elif is_file_type_supported(text):
         return create_url(text)
     return UNSUPPORTED_MESSAGE
 

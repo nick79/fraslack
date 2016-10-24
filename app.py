@@ -78,7 +78,7 @@ def frame():
             app.logger.info('Opened file %s', str(file_url))
             return render_template('frame.html', file=file_url)
         else:
-            message = 'File: %s does not exist', str(file_url)
+            message = 'File: %s does not exist' %(str(file_url))
             app.logger.warn(message)
             return render_template('error.html', error_message=message)
     except BadSignature as e:
