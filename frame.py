@@ -1,7 +1,9 @@
 import os
 import urllib2
-from app import HASH_NOTEPAD, HASH_PAINT
 from const import FRAME_SCRIPT, SUPPORTED_FILE_TYPES
+
+HASH_NOTEPAD = str(os.environ.get("HASH_NOTEPAD"))
+HASH_PAINT = str(os.environ.get("HASH_PAINT"))
 
 
 def file_exist(file_url):

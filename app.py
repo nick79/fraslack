@@ -16,8 +16,6 @@ app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.DEBUG)
 SLACK_TOKEN = str(os.environ.get("SLACK_TOKEN"))
 SECRET_KEY = str(os.environ.get("SECRET_KEY"))
-HASH_NOTEPAD = str(os.environ.get("HASH_NOTEPAD"))
-HASH_PAINT = str(os.environ.get("HASH_PAINT"))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -81,12 +79,13 @@ def frame():
             frame_script = generate_frame_script(file_url)
             return render_template('frame.html', file=file_url, script=frame_script)
         else:
-            message = 'File: %s does not exist' %(str(file_url))
+            message = 'File: %s does not exist' % (str(file_url))
             app.logger.warn(message)
             return render_template('error.html', error_message=message)
     except BadSignature as e:
         app.logger.error(e)
         return render_template('error.html', error_message='Bad signature in link')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
