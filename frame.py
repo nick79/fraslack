@@ -1,6 +1,6 @@
 import os
 import urllib2
-from const import FRAME_SCRIPT, SUPPORTED_FILE_TYPES
+from const import SUPPORTED_FILE_TYPES
 
 HASH_NOTEPAD = str(os.environ.get("HASH_NOTEPAD"))
 HASH_PAINT = str(os.environ.get("HASH_PAINT"))
@@ -21,15 +21,14 @@ def file_exist(file_url):
         return False
 
 
-def generate_frame_script(file_url):
+def get_hash(file_url):
     """
-    Method that based on file url generate javascript necessary for embedding Frame terminal.
+    Method that based on file url return appropriate hash.
     :param file_url: File that should be opened.
-    :return: Generated javascript,
+    :return: Hash for embedding Frame terminal.
     """
     file_extension = os.path.splitext(file_url)[1]
     if file_extension == SUPPORTED_FILE_TYPES[0]:
-        hash_id = HASH_NOTEPAD
+        return HASH_NOTEPAD
     else:
-        hash_id = HASH_PAINT
-    return FRAME_SCRIPT % (str(hash_id), str(file_url))
+        return HASH_PAINT
