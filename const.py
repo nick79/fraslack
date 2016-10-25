@@ -11,3 +11,6 @@ BASE_PATH = 'https://fraslack.herokuapp.com'
 FRAME_PATH = '/frame'
 SLACK_PATH = '/slack'
 DATA_PATH = '/data/<path:path>'
+
+# Embedded Frame terminal
+FRAME_SCRIPT = "<script src='http://app.fra.me/embed/mf2ea.js?hash=%s&size=L&file =%s&autostart=true'></script>"

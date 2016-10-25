@@ -40,7 +40,8 @@ def create_url(text):
 
 def process_command(text):
     """
-    Method that check if type of file requested from Slack is supported and in that case create link for opening it.
+    Method first check if url is complete and type of file requested from Slack is supported and in that case create
+    link for opening it.
     :param text: Received url of file from slack.
     :return: Link for opening file in case that file is supported, otherwise message about unsupported file.
     """

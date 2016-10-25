@@ -8,7 +8,7 @@ from flask import request
 from flask import send_from_directory
 from itsdangerous import BadSignature, Signer
 from const import FRAME_PATH, SLACK_PATH, DATA_PATH
-from frame import file_exist
+from frame import file_exist, generate_frame_script
 from slack import validate, process_command
 
 app = Flask(__name__, static_url_path='/static')
@@ -16,6 +16,8 @@ app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.DEBUG)
 SLACK_TOKEN = str(os.environ.get("SLACK_TOKEN"))
 SECRET_KEY = str(os.environ.get("SECRET_KEY"))
+HASH_NOTEPAD = str(os.environ.get("HASH_NOTEPAD"))
+HASH_PAINT = str(os.environ.get("HASH_PAINT"))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -76,7 +78,8 @@ def frame():
         print str(file_url)
         if file_exist(file_url):
             app.logger.info('Opened file %s', str(file_url))
-            return render_template('frame.html', file=file_url)
+            frame_script = generate_frame_script(file_url)
+            return render_template('frame.html', file=file_url, script=frame_script)
         else:
             message = 'File: %s does not exist' %(str(file_url))
             app.logger.warn(message)

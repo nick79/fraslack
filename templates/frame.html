@@ -5,7 +5,10 @@
     <title>Frame Integration</title>
 </head>
 <body>
-    <h1>File that should be opened:</h1>
-    {{ file }}
+    <h1>Opened file: {{ file }}</h1>
+    <div id="embed-container">
+      <!-- Frame Embeddable Terminal script tag -->
+        {{ script }}
+    </div>
 </body>
 </html>
