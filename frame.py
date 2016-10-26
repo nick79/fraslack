@@ -1,9 +1,7 @@
 import os
-import urllib2
-from const import SUPPORTED_FILE_TYPES
-
-HASH_NOTEPAD = str(os.environ.get("HASH_NOTEPAD"))
-HASH_PAINT = str(os.environ.get("HASH_PAINT"))
+import requests
+from requests import ConnectionError
+from globals import HASHES
 
 
 def file_exist(file_url):
@@ -12,12 +10,12 @@ def file_exist(file_url):
     :param file_url: Url of the file that should be checked.
     :return: True if file exist, otherwise False.
     """
-    request = urllib2.Request(file_url)
-    request.get_method = lambda: 'HEAD'
     try:
-        response = urllib2.urlopen(request)
-        return True
-    except urllib2.HTTPError:
+        response = requests.head(file_url)
+        if 200 <= response.status_code < 300:
+            return True
+        return False
+    except ConnectionError:
         return False
 
 
@@ -28,7 +26,4 @@ def get_hash(file_url):
     :return: Hash for embedding Frame terminal.
     """
     file_extension = os.path.splitext(file_url)[1]
-    if file_extension == SUPPORTED_FILE_TYPES[0]:
-        return HASH_NOTEPAD
-    else:
-        return HASH_PAINT
+    return str(HASHES.get(file_extension))

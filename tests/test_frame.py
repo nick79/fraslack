@@ -1,3 +1,4 @@
+import unittest
 from unittest import TestCase
 from frame import file_exist
 
@@ -11,3 +12,7 @@ class TestForte(TestCase):
 
     def test_file_exist_positive(self):
         self.assertTrue(file_exist(FILE_URL_POSITIVE))
+
+
+if __name__ == "__main__":
+    unittest.main()

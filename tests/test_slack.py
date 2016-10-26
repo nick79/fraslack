@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 from itsdangerous import Signer
-import app
+import globals
 from const import UNSUPPORTED_MESSAGE
 from slack import is_file_type_supported, process_command
 
@@ -25,7 +25,7 @@ class TestSlack(TestCase):
         self.assertFalse(is_file_type_supported(FILE_PATH_NEGATIVE))
 
     def test_process_command_positive(self):
-        signer = Signer(app.SECRET_KEY)
+        signer = Signer(globals.SECRET_KEY)
         to_be_unsigned = process_command(FILE_URL_POSITIVE).split("?file_url=")[1]
         got = signer.unsign(to_be_unsigned)
         self.assertEqual(FILE_URL_POSITIVE, got)
@@ -34,5 +34,5 @@ class TestSlack(TestCase):
         self.assertEqual(UNSUPPORTED_MESSAGE, process_command(FILE_URL_NEGATIVE))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
