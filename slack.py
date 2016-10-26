@@ -1,7 +1,8 @@
 import os
 from itsdangerous import Signer
 import globals
-from const import SUPPORTED_FILE_TYPES, FRAME_PATH, BASE_PATH, UNSUPPORTED_MESSAGE, PROTOCOLS, UNSUPPORTED_PROTOCOL
+from const import SUPPORTED_FILE_TYPES, FRAME_PATH, BASE_PATH, UNSUPPORTED_MESSAGE, PROTOCOLS, \
+    UNSUPPORTED_PROTOCOL_MESSAGE, HELP_MESSAGE, USE_HELP_MESSAGE
 
 
 def validate(token):
@@ -40,13 +41,20 @@ def create_url(text):
 
 def process_command(text):
     """
-    Method first check if url is complete and type of file requested from Slack is supported and in that case create
-    link for opening it.
+    Method first check if user provided any file url. If not, then message about help usage is returned to the user.
+    If user typed help, method return short help message about command usage. If url is complete and type of requested
+    file from Slack is supported method in that case create link for opening it.
     :param text: Received url of file from slack.
-    :return: Link for opening file in case that file is supported, otherwise message about unsupported file.
+    :return: Help message or link for opening file in case that file is supported, otherwise message about unsupported
+    file.
     """
-    if not text.startswith(PROTOCOLS):
-        return UNSUPPORTED_PROTOCOL
+    if not text:
+        return USE_HELP_MESSAGE
+    elif text.startswith('help'):
+        return HELP_MESSAGE
+    elif not text.startswith(PROTOCOLS):
+        return UNSUPPORTED_PROTOCOL_MESSAGE
     elif is_file_type_supported(text):
         return create_url(text)
-    return UNSUPPORTED_MESSAGE
+    else:
+        return UNSUPPORTED_MESSAGE
