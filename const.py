@@ -1,6 +1,5 @@
 # Predefined Slack messages
 HELP_MESSAGE = 'To open file at [file_url] address within Frame platform please use `/frame file_url`.'
-USE_HELP_MESSAGE = 'Missing argument. Please use `/frame help`.'
 UNSUPPORTED_MESSAGE = 'Unsupported File Type'
 UNSUPPORTED_PROTOCOL_MESSAGE = 'File address must start with http:// or https://'
 

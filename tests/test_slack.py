@@ -2,7 +2,7 @@ import unittest
 from unittest import TestCase
 from itsdangerous import Signer
 import globals
-from const import UNSUPPORTED_MESSAGE, USE_HELP_MESSAGE, HELP_MESSAGE
+from const import UNSUPPORTED_MESSAGE, HELP_MESSAGE
 from slack import is_file_type_supported, process_command
 
 FILE_URL_POSITIVE = 'https://fraslack.herokuapp.com/data/test.txt'
@@ -25,7 +25,7 @@ class TestSlack(TestCase):
         self.assertFalse(is_file_type_supported(FILE_PATH_NEGATIVE))
 
     def test_process_command_empty(self):
-        self.assertEqual(USE_HELP_MESSAGE, process_command(''))
+        self.assertEqual(HELP_MESSAGE, process_command(''))
 
     def test_process_command_help(self):
         self.assertEqual(HELP_MESSAGE, process_command('help'))
