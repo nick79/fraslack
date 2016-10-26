@@ -1,4 +1,3 @@
-import os
 import sys
 from flask import Flask
 from flask import Response
@@ -7,14 +6,14 @@ from flask import render_template
 from flask import request
 from flask import send_from_directory
 from itsdangerous import BadSignature, Signer
-from const import FRAME_PATH, SLACK_PATH, DATA_PATH
+from const import FRAME_PATH, SLACK_PATH, DATA_PATH, SUPPORTED_FILE_TYPES
+from frame import file_exist, get_hash
+from globals import SECRET_KEY, PORT, HASHES
 from slack import validate, process_command
 
 app = Flask(__name__, static_url_path='/static')
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.DEBUG)
-SLACK_TOKEN = str(os.environ.get("SLACK_TOKEN"))
-SECRET_KEY = str(os.environ.get("SECRET_KEY"))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -72,12 +71,29 @@ def frame():
     signer = Signer(SECRET_KEY)
     try:
         file_url = signer.unsign(request.args.get('file_url'))
-        return render_template('frame.html', file=file_url)
+        if file_exist(file_url):
+            app.logger.info('Opened file %s', str(file_url))
+            hash_id = get_hash(file_url)
+            return render_template('frame.html', hash=hash_id, file=file_url)
+        else:
+            message = 'File: %s does not exist' % (str(file_url))
+            app.logger.warn(message)
+            return render_template('error.html', error_message=message)
     except BadSignature as e:
         app.logger.error(e)
         return render_template('error.html', error_message='Bad signature in link')
 
+
+def validate_hashes():
+    if all(hash in HASHES for hash in SUPPORTED_FILE_TYPES):
+        return True
+    else:
+        app.logger.error('Wrong configuration - hashes for some applications are missing!')
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    if validate_hashes():
+        app.run(debug=True)
+        app.run(host='0.0.0.0', port=PORT)
+    else:
+        sys.exit(1)
